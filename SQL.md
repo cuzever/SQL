@@ -186,7 +186,9 @@ select * from StudentInfo inner join ClassInfo on StudentInfo.cid=ClassInfo.cid
 --学生姓名、科目名称、分数
 --StudentInfo,SubjectInfo,ScoreInfo
 --sid=stuid,sid=subid
-select * from ScoreInfo as score inner join StudentInfo as stu on score.stuId=stu.sId inner join SubjectInfo as sub on score.subId=sub.sId
+select * from ScoreInfo as score
+inner join StudentInfo as stu on score.stuId=stu.sId
+inner join SubjectInfo as sub on score.subId=sub.sId
 ```
 
 - 聚合函数：对行数据进行合并（sum,avg,count,max,min但null不做统计计算)一般是对数字类型的列进行操作
@@ -198,7 +200,9 @@ select MAX(scorevalue) from ScoreInfo where subId=2 --数学成绩的最高分
 
 --求语文科目的平均分
 --SubjectInfo,ScoreInfo,avg
-select AVG(scoreValue) from SubjectInfo inner join ScoreInfo on subId=SubjectInfo.sId where sTitle='语文'
+select AVG(scoreValue) from SubjectInfo
+inner join ScoreInfo on subId=SubjectInfo.sId
+where sTitle='语文'
 ```
 
 - 开窗函数：over()将统计出来的数据分布到原表中的每一行中；和聚合函数、排名函数一起使用
@@ -236,6 +240,38 @@ union
 select sid from StudentInfo
 ```
 
-## 其他脚本操作
+## 3.其他脚本操作
 
 - 快速备份
+
+    a. 向未有表备份：select 列名 into 备份表名 from 源表名 --说明：备份表可以不存在，会新建表，表的结构完全一致，但是不包含约束，如果只包含结构不包含数据，可以加top 0
+
+    ```SQL
+    select * into test1 from ClassInfo --可以复制标识，但不包含约束
+
+    select * into test2 from ClassInfo where 1=2  --不复制数据
+    ```
+
+    b. 向已有表备份： insert into 备份表名 select 列名 from 源表名
+
+    ```SQL
+    insert into test2(cTitle) select cTitle from ClassInfo --要指定列名插入
+    ```
+
+- 字符串函数（cast,convert/ascii,char（ascii和字符互转）/left,right,substring:字符串截取,索引从1开始，而不是0/len,lower,upper：字符串长度，大小写互转/ltrim,rtrim/去空格）
+
+```SQL
+select CAST(89.00000 as decimal(4,1))--转成4位，小数后1位,CAST将任意类型转到任意类型
+
+--CONVERT:将任意类型转到任意类型，如果目标是字符串，则style可以设置格式
+```
+
+-日期函数：getDate(获取当前日期时间)，dateAdd(日期加)，dateDiff(日期减)，datePart(取日期某部分)，注意：dateAdd,dateDiff,datePart第一个参数使用双引号
+
+```SQL
+select datepart("Dayofyear",GETDATE())
+```
+
+```SQL
+--以“2015-1-1”的格式显示日期
+select * from StudentInfo
